@@ -8,17 +8,11 @@ final class SessionDownloadTask: URLSessionDownloadTask {
 
     // MARK: - Properties
 
-    weak var session: Session!
-    let request: URLRequest
-    let completion: Completion?
-    private let dataTask: SessionDataTask
+    let dataTask: SessionDataTask
 
     // MARK: - Initializers
 
     init(session: Session, request: URLRequest, taskIdentifier: Int, completion: Completion? = nil) {
-        self.session = session
-        self.request = request
-        self.completion = completion
         dataTask = SessionDataTask(session: session, request: request, taskIdentifier: taskIdentifier) { data, response, error in
             let location: URL?
             if let data = data {
@@ -30,7 +24,7 @@ final class SessionDownloadTask: URLSessionDownloadTask {
                 location = nil
             }
 
-            self.completion?(location, response, error)
+            completion?(location, response, error)
         }
     }
 
@@ -42,6 +36,10 @@ final class SessionDownloadTask: URLSessionDownloadTask {
 
     override func resume() {
         dataTask.resume()
+    }
+
+    override var originalRequest: URLRequest? {
+        return dataTask.originalRequest
     }
 
     override var taskIdentifier: Int {

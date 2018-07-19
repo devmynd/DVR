@@ -6,7 +6,6 @@ final class SessionDataTask: URLSessionDataTask {
 
     typealias Completion = (Data?, Foundation.URLResponse?, NSError?) -> Void
 
-
     // MARK: - Properties
 
     weak var session: Session!
@@ -19,7 +18,6 @@ final class SessionDataTask: URLSessionDataTask {
     override var response: Foundation.URLResponse? {
         return interaction?.response
     }
-
 
     // MARK: - Initializers
 
@@ -82,6 +80,10 @@ final class SessionDataTask: URLSessionDataTask {
             this.session.finishTask(this, interaction: this.interaction!, playback: false)
         })
         task.resume()
+    }
+
+    override var originalRequest: URLRequest? {
+        return self.request
     }
 
     override var taskIdentifier: Int {
