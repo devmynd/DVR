@@ -11,24 +11,15 @@ final class SessionDownloadTask: URLSessionDownloadTask {
     weak var session: Session!
     let request: URLRequest
     let completion: Completion?
-
+    private let dataTask: SessionDataTask
 
     // MARK: - Initializers
 
-    init(session: Session, request: URLRequest, completion: Completion? = nil) {
+    init(session: Session, request: URLRequest, taskIdentifier: Int, completion: Completion? = nil) {
         self.session = session
         self.request = request
         self.completion = completion
-    }
-
-    // MARK: - URLSessionTask
-
-    override func cancel() {
-        // Don't do anything
-    }
-
-    override func resume() {
-        let task = SessionDataTask(session: session, request: request) { data, response, error in
+        dataTask = SessionDataTask(session: session, request: request, taskIdentifier: taskIdentifier) { data, response, error in
             let location: URL?
             if let data = data {
                 // Write data to temporary file
@@ -41,6 +32,19 @@ final class SessionDownloadTask: URLSessionDownloadTask {
 
             self.completion?(location, response, error)
         }
-        task.resume()
+    }
+
+    // MARK: - URLSessionTask
+
+    override func cancel() {
+        // Don't do anything
+    }
+
+    override func resume() {
+        dataTask.resume()
+    }
+
+    override var taskIdentifier: Int {
+        return dataTask.taskIdentifier
     }
 }

@@ -15,11 +15,11 @@ final class SessionUploadTask: URLSessionUploadTask {
 
     // MARK: - Initializers
 
-    init(session: Session, request: URLRequest, completion: Completion? = nil) {
+    init(session: Session, request: URLRequest, taskIdentifier: Int, completion: Completion? = nil) {
         self.session = session
         self.request = request
         self.completion = completion
-        dataTask = SessionDataTask(session: session, request: request, completion: completion)
+        dataTask = SessionDataTask(session: session, request: request, taskIdentifier: taskIdentifier, completion: completion)
     }
 
     // MARK: - URLSessionTask
@@ -30,5 +30,9 @@ final class SessionUploadTask: URLSessionUploadTask {
 
     override func resume() {
         dataTask.resume()
+    }
+
+    override var taskIdentifier: Int {
+        return dataTask.taskIdentifier
     }
 }

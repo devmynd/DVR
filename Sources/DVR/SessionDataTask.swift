@@ -12,6 +12,7 @@ final class SessionDataTask: URLSessionDataTask {
     weak var session: Session!
     let request: URLRequest
     let completion: Completion?
+    private let _taskIdentifier: Int
     private let queue = DispatchQueue(label: "com.venmo.DVR.sessionDataTaskQueue", attributes: [])
     private var interaction: Interaction?
 
@@ -22,12 +23,12 @@ final class SessionDataTask: URLSessionDataTask {
 
     // MARK: - Initializers
 
-    init(session: Session, request: URLRequest, completion: (Completion)? = nil) {
+    init(session: Session, request: URLRequest, taskIdentifier: Int, completion: (Completion)? = nil) {
         self.session = session
         self.request = request
+        self._taskIdentifier = taskIdentifier
         self.completion = completion
     }
-
 
     // MARK: - URLSessionTask
 
@@ -81,5 +82,9 @@ final class SessionDataTask: URLSessionDataTask {
             this.session.finishTask(this, interaction: this.interaction!, playback: false)
         })
         task.resume()
+    }
+
+    override var taskIdentifier: Int {
+        return self._taskIdentifier
     }
 }
